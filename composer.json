@@ -1,5 +1,5 @@
 {
-    "name": "1happyplace/terminal",
+    "name": "1happyplace/ansi-terminal",
     "description": "PHP Terminal emulator controller utilizing ANSI escape sequence coding.",
     "keywords": ["Terminal","Emulator","ANSI"],
     "homepage": "http://clio.1happyplace.com/clio/ansi-terminal.html",
