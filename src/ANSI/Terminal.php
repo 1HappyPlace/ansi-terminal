@@ -117,6 +117,19 @@ abstract class Terminal
         return $this;
     }
 
+    /**
+     * Returns the current desired state of bolding, this may not represent what has
+     * been commanded to the terminal, but rather the current intent.  Commanding only
+     * happens with display
+     * 
+     * @return bool
+     */
+    public function getBold() {
+        
+        // return the desired state of bold
+        return $this->desiredState->isBold();
+    }
+
 
     /////////////////////////////////////////////////////////////////////////////////////////
     //                                      Underscore                                     //
@@ -138,7 +151,18 @@ abstract class Terminal
         return $this;
     }
 
-    
+    /**
+     * Returns the current desired state of underscoring, this may not represent what has
+     * been commanded to the terminal, but rather the current intent.  Commanding only
+     * happens with display
+     *
+     * @return bool
+     */
+    public function getUnderscore() {
+
+        // return the desired state of bold
+        return $this->desiredState->isUnderscore();
+    }
 
     /////////////////////////////////////////////////////////////////////////////////////////
     //                                       Colors                                        //
@@ -167,6 +191,18 @@ abstract class Terminal
 
     }
 
+    /**
+     * Return the currently desired text color, keep in mind this may not be what has
+     * been commanded to the terminal, the commanding only goes out the door with display
+     * 
+     * @return ColorInterface
+     */
+    public function getTextColor() {
+        
+        // return the current desired text color
+        return $this->desiredState->getTextColor();
+    }
+
 
     /**
      * Set the fill color
@@ -190,6 +226,17 @@ abstract class Terminal
         return $this;
     }
 
+    /**
+     * Return the currently desired fill color, keep in mind this may not be what has
+     * been commanded to the terminal, the commanding only goes out the door with display
+     *
+     * @return ColorInterface
+     */
+    public function getFillColor() {
+
+        // return the current desired text color
+        return $this->desiredState->getFillColor();
+    }
 
     /**
      * Set both the fill and text colors

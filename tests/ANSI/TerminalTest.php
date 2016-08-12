@@ -57,6 +57,7 @@ class TerminalTest extends TestCase
 
     /**
      * public function setBold($on = true)
+     * public function getBold()
      *
      * Set bolding on or off
      *
@@ -64,23 +65,29 @@ class TerminalTest extends TestCase
      *
      * return $this;
      */
-    public function test_setBold() {
+    public function test_setGetBold() {
 
         $term = new TerminalEcho("VT100");
+        $this->assertFalse($term->getBold());
 
+        // now set the desired bolding to true (but don't command the terminal)
+        $term->setBold(true);
+        $this->assertTrue($term->getBold());
 
         // simply set the mode
         $term->setBold(true)->display("");
         $output = "\\e[1m";
+        $this->assertTrue($term->getBold());
 
         // chaining
         $term->setBold(true)->setBold(false)->display("");
         $output .= $this->clear;
-
+        $this->assertFalse($term->getBold());
 
         // bad mode
         $term->setBold("junk")->display("");
         $output .= "\\e[1m";
+        $this->assertTrue($term->getBold());
 
 
         $this->expectOutputString($output);
@@ -94,6 +101,7 @@ class TerminalTest extends TestCase
 
     /**
      * public function setUnderscore($on = true)
+     * public function getUnderscore()
      *
      * Set underscoring on or off
      *
@@ -101,23 +109,30 @@ class TerminalTest extends TestCase
      *
      * return $this;
      */
-    public function test_setUnderscore() {
+    public function test_setGetUnderscore() {
 
         $term = new TerminalEcho("VT100");
+        $this->assertFalse($term->getUnderscore());
 
+        // now set the desired underscoring to true (but don't command the terminal)
+        $term->setUnderscore(true);
+        $this->assertTrue($term->getUnderscore());
 
         // simply set the underscore
         $term->setUnderscore(true)->display("");
         $output = "\\e[4m";
+        $this->assertTrue($term->getUnderscore());
 
         // chaining
         $term->setUnderscore(true)->setUnderscore(false)->display("");
         $output .= $this->clear;
+        $this->assertFalse($term->getUnderscore());
 
 
         // bad mode
         $term->setUnderscore("junk")->display("");
         $output .= "\\e[4m";
+        $this->assertTrue($term->getUnderscore());
 
 
         $this->expectOutputString($output);
@@ -135,6 +150,7 @@ class TerminalTest extends TestCase
 
     /**
      * public function setTextColor($color)
+     * public function getTextColor()
      *
      * Set the text color
      *
@@ -151,25 +167,39 @@ class TerminalTest extends TestCase
     public function test_setTextColor() {
 
         $term = new TerminalEcho("XTERM");
+        $textColor = $term->getTextColor();
+        $this->assertFalse($textColor->isValid());
+
+        $term->setTextColor("blue");
+        $textColor = $term->getTextColor();
+        $this->assertSame("blue",$textColor->getName());
 
 
         $term->setTextColor(null)->display("");
+        $textColor = $term->getTextColor();
+        $this->assertFalse($textColor->isValid());
 
         // set a new color from a null color
         $term->setTextColor("blue")->display("");
         $output = "\\e[38;5;20m";
+        $textColor = $term->getTextColor();
+        $this->assertSame("blue",$textColor->getName());
 
         $term = new TerminalEcho("RGB");
 
         // set the same color again, chaining
         $term->setTextColor("green")->setTextColor("red")->display("");
         $output .= "\\e[38;2;255;0;0m";
+        $textColor = $term->getTextColor();
+        $this->assertSame("red",$textColor->getName());
 
         $term = new TerminalEcho("VT100");
 
         // set a new color from an old color
         $term->setTextColor("ansired")->display("")->setTextColor(null)->setTextColor("ansiblack")->display("");
         $output .= "\\e[31m\\e[30m";
+        $textColor = $term->getTextColor();
+        $this->assertSame("ansiblack",$textColor->getName());
 
 
 
@@ -182,6 +212,7 @@ class TerminalTest extends TestCase
 
     /**
      * public function setFillColor($color)
+     * public function getFillColor()
      *
      * Set the fill color
      *
@@ -195,28 +226,41 @@ class TerminalTest extends TestCase
      *
      * return $this
      */
-    public function test_setFillColor() {
+    public function test_setGetFillColor() {
 
         $term = new TerminalEcho("XTERM");
+        $fillColor = $term->getFillColor();
+        $this->assertFalse($fillColor->isValid());
 
+        $term->setFillColor("blue");
+        $fillColor = $term->getFillColor();
+        $this->assertSame("blue",$fillColor->getName());
 
         $term->setFillColor(null)->display("");
+        $fillColor = $term->getFillColor();
+        $this->assertFalse($fillColor->isValid());
 
         // set a new color from a null color
         $term->setFillColor("blue")->display("");
         $output = "\\e[48;5;20m";
+        $fillColor = $term->getFillColor();
+        $this->assertSame("blue",$fillColor->getName());
 
         $term = new TerminalEcho("RGB");
 
         // set the same color again, chaining
         $term->setFillColor("green")->setFillColor("red")->display("");
         $output .= "\\e[48;2;255;0;0m";
+        $fillColor = $term->getFillColor();
+        $this->assertSame("red",$fillColor->getName());
 
         $term = new TerminalEcho("VT100");
 
         // set a new color from an old color
         $term->setFillColor("ansired")->display("")->setFillColor(null)->setFillColor("ansiblack")->display("");
         $output .= "\\e[41m\\e[40m";
+        $fillColor = $term->getFillColor();
+        $this->assertSame("ansiblack",$fillColor->getName());
 
 
         $this->expectOutputString($output);
