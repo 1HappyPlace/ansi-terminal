@@ -394,7 +394,51 @@ class TerminalTest extends TestCase
 
     }
 
+    /**
+     * public function outputEscapeSequence()
+     *
+     * Send out the escape sequence which will accomplish the desired state
+     */
+    public function test_outputEscapeSequence() {
 
+        $clio = new TerminalEcho("VT100");
+        $clio->setTextColor("red");
+        $clio->outputEscapeSequence();
+        $output = "\\e[91m";
+
+
+        $clio->setFillColor("black");
+        $clio->outputEscapeSequence();
+        $output .= "\\e[40m";
+
+        // it should ignore the green
+        $clio->setTextColor("green")->setColors("cyan","white");
+        $clio->outputEscapeSequence();
+        $output .= "\\e[96;107m";
+
+        // bold
+        $clio->setBold();
+        $clio->outputEscapeSequence();
+        $output .= "\\e[1m";
+
+        // because bold went off, the entire sequence should be sent
+        $clio->setBold(false)->setUnderscore();
+        $clio->outputEscapeSequence();
+        $output .= "\\e[0;4;96;107m";
+
+        // clear it out and set bold and green, but shouldn't see separate clear sequence
+        $clio->clear()->setBold(true)->setTextColor("green");
+        $clio->outputEscapeSequence();
+        $output .= "\\e[0;1;92m";
+
+        // the clear goes out, bold is set on and off, and no further sequencing should go out
+        $clio->clear(true)->setBold(true)->setBold(false)->display("hello");
+        $clio->outputEscapeSequence();
+        $output .= "\\e[0mhello";
+
+        $this->expectOutputString($output);
+
+    }
 
     /**
      * public function display($text)

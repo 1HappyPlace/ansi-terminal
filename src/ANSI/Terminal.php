@@ -301,7 +301,17 @@ abstract class Terminal
         return $this;
     }
 
-
+    /**
+     * Send out the escape sequence which will accomplish the desired state
+     */
+    public function outputEscapeSequence() {
+        
+        // send out any escaping to implement anything sitting in the desired state
+        $this->output($this->generator->generate($this->currentState, $this->desiredState));
+        
+        // copy the current state to the now achieved desired state
+        $this->currentState = clone $this->desiredState;
+    }
 
     /**
      * Display the text.  This does not jump down to a new line.
@@ -314,11 +324,8 @@ abstract class Terminal
     public function display($text) {
 
         // send out any escaping to implement anything sitting in the desired state
-        $this->output($this->generator->generate($this->currentState, $this->desiredState));
-
-        // copy the current state to the now achieved desired state
-        $this->currentState = clone $this->desiredState;
-
+        $this->outputEscapeSequence();
+        
         // Send out the text
         $this->output($text);
 
