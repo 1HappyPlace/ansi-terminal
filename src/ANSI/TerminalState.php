@@ -253,7 +253,7 @@ class TerminalState implements TerminalStateInterface
         } else if ($currentTextColor->isValid() && $desiredTextColor->isValid()) {
             
             // if the two colors are different
-            if ($currentTextColor !== $desiredTextColor) {
+            if ($currentTextColor != $desiredTextColor) {
                 
                 // set the text color
                 $ret->setTextColor($desiredTextColor);
@@ -280,7 +280,7 @@ class TerminalState implements TerminalStateInterface
         } else if ($currentFillColor->isValid() && $desiredFillColor->isValid()) {
 
             // if the two colors are different
-            if ($currentFillColor !== $desiredFillColor) {
+            if ($currentFillColor != $desiredFillColor) {
 
                 // set the text color
                 $ret->setFillColor($desiredFillColor);

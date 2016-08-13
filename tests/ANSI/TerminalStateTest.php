@@ -300,6 +300,19 @@ class TerminalStateTest extends TestCase
         $this->assertInstanceOf("\\ANSI\\Color\\Color", $changes->getFillColor());
         $this->assertFalse($changes->getFillColor()->isValid());
 
+        // make the current state also set to orange, but a different instance of Color, still should find no changes
+        $state->setTextColor("orange");
+        $changes = $state->findChanges($desired);
+        $this->assertNull($changes->getTextColor()->getName());
+
+        // now use the exact same blue
+        $blue = new Color("blue");
+        $state->setTextColor($blue);
+        $desired->setTextColor($blue);
+        $changes = $state->findChanges($desired);
+        $this->assertNull($changes->getTextColor()->getName());
+
+
         // set a different text color
         $state->setTextColor("orange");
         $desired->setTextColor("blue");
@@ -332,7 +345,17 @@ class TerminalStateTest extends TestCase
         $this->assertInstanceOf("\\ANSI\\Color\\Color", $changes->getFillColor());
         $this->assertSame("black",$changes->getFillColor()->getName());
 
+        // make the current state also set to black, but a different instance of Color, still should find no changes
+        $state->setFillColor("black");
+        $changes = $state->findChanges($desired);
+        $this->assertNull($changes->getFillColor()->getName());
 
+        // now use the exact same blue
+        $blue = new Color("blue");
+        $state->setFillColor($blue);
+        $desired->setFillColor($blue);
+        $changes = $state->findChanges($desired);
+        $this->assertNull($changes->getFillColor()->getName());
 
 
 
