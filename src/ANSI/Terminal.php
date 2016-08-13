@@ -77,6 +77,18 @@ abstract class Terminal
 
     }
 
+    /**
+     * Gets the desired state of the terminal, note that this is not related to the actual state
+     * of the terminal, rather, the desired state that will happen the next time text is output
+     * 
+     * @return TerminalStateInterface
+     */
+    public function getState() {
+        
+        // return the current desired state
+        return $this->desiredState;
+    }
+
 
     /////////////////////////////////////////////////////////////////////////////////////////
     //                                 Abstract Methods                                    //

@@ -1,7 +1,9 @@
 <?php
 
 
+use ANSI\Color\Mode;
 use ANSI\Terminal;
+use ANSI\TerminalStateInterface;
 use PHPUnit\Framework\TestCase;
 
 
@@ -51,6 +53,61 @@ class TerminalTest extends TestCase
 
     }
 
+    /**
+     * function getState()
+     *
+     * Gets the desired state of the terminal, note that this is not related to the actual state
+     * of the terminal, rather, the desired state that will happen the next time text is output
+     *
+     * @return TerminalStateInterface
+     */
+    public function test_getState() {
+
+        $term = new TerminalEcho(Mode::XTERM);
+
+        $state = $term->getState();
+        $this->assertInstanceOf("\\ANSI\\TerminalStateInterface",$state);
+        $this->assertFalse($state->isBold());
+        $this->assertFalse($state->isUnderscore());
+        $this->assertFalse($state->getTextColor()->isValid());
+        $this->assertFalse($state->getFillColor()->isValid());
+
+        $term->setBold();
+        $state = $term->getState();
+        $this->assertInstanceOf("\\ANSI\\TerminalStateInterface",$state);
+        $this->assertTrue($state->isBold());
+        $this->assertFalse($state->isUnderscore());
+        $this->assertFalse($state->getTextColor()->isValid());
+        $this->assertFalse($state->getFillColor()->isValid());
+
+        $term->setUnderscore();
+        $state = $term->getState();
+        $this->assertInstanceOf("\\ANSI\\TerminalStateInterface",$state);
+        $this->assertTrue($state->isBold());
+        $this->assertTrue($state->isUnderscore());
+        $this->assertFalse($state->getTextColor()->isValid());
+        $this->assertFalse($state->getFillColor()->isValid());
+
+        $term->setFillColor("white");
+        $state = $term->getState();
+        $this->assertInstanceOf("\\ANSI\\TerminalStateInterface",$state);
+        $this->assertTrue($state->isBold());
+        $this->assertTrue($state->isUnderscore());
+        $this->assertFalse($state->getTextColor()->isValid());
+        $this->assertTrue($state->getFillColor()->isValid());
+        $this->assertSame("white",$state->getFillColor()->getName());
+
+        $term->setTextColor("black");
+        $state = $term->getState();
+        $this->assertInstanceOf("\\ANSI\\TerminalStateInterface",$state);
+        $this->assertTrue($state->isBold());
+        $this->assertTrue($state->isUnderscore());
+        $this->assertTrue($state->getTextColor()->isValid());
+        $this->assertSame("black",$state->getTextColor()->getName());
+        $this->assertTrue($state->getFillColor()->isValid());
+        $this->assertSame("white",$state->getFillColor()->getName());
+
+    }
     /////////////////////////////////////////////////////////////////////////////////////////
     //                                          Bold                                       //
     /////////////////////////////////////////////////////////////////////////////////////////
