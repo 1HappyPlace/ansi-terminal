@@ -238,8 +238,8 @@ class Colors
     private static $XTermColors = [
 
         // original VT100 16 colors
-        [0,0,0], [205,0,0], [0,205,0], [205,205,0], [0,0,238], [205,0,205], [0,204,204], [229,229,299],
-        [76,76,76], [255,0,0], [0,255,0], [255,0,0], [70,130,180], [255,0,255], [0,255,255], [255,255,255],
+        [0,0,0],    [205,0,0], [0,205,0], [205,205,0], [0,0,238],    [205,0,205], [0,204,204], [229,229,299],
+        [76,76,76], [255,0,0], [0,255,0], [255,0,0],   [70,130,180], [255,0,255], [0,255,255], [255,255,255],
 
         // the mathematical pattern that divides up the RGB spectrum for a large portion of the 256 numbers
         [0,0,95],  [0,0,135], [0,0,175], [0,0,215], [0,0,255],
@@ -688,5 +688,67 @@ class Colors
 
     }
 
- 
+    /**
+     * Get the RGB for a particular xterm code.  This is based on what
+     * the xterm codes are supposed to represent, it may actually be
+     * different for each terminal emulator.  IT was correct for
+     * PHPStorm's terminal emulator.
+     *
+     * @param integer $index
+     * @return int[] | null - either the [R,G,B] or null if the index is not
+     * between 0 and 255
+     */
+    public static function getRGBForXTermCode($index) {
+
+        // ensure the index is in between 0 and 255
+        if (($index >= 0) && ($index <= 254))
+        {
+
+            // get the RGB for that particular xterm color
+            return self::$XTermColors[$index];
+
+            
+        // invalid index
+        } else {
+
+            // return null to indicate an error
+            return null;
+
+        }
+
+    }
+
+    /**
+     * Get the RGB for a particular VT-100 code.  This is based on
+     * documentation of what those early colors were supposed
+     * to be, but it is up to each terminal emulator to determine.
+     * The colors reported here were measured on PHPStorm's terminal
+     * emulator.
+     *
+     * @param integer $index
+     * @return int[] | null - either the [R,G,B] or null
+     */
+    public static function getRGBForVT100Code($index) {
+        
+        // check for the lower 8 codes
+        if (($index >= 30) && ($index <= 37)) {
+            
+            // subtract out the 30 to get the 0...7
+            return self::$XTermColors[$index - 30];
+
+        // check for the upper 8 codes    
+        } else if (($index >= 90) && ($index <= 97)) {
+
+            // subtract out 82 to get 8..15
+            return self::$XTermColors[$index - 82];
+            
+        // invalid index
+        } else {
+
+            // return null to indicate an error
+            return null;
+
+        }
+
+    }
 }

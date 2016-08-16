@@ -103,11 +103,19 @@ class ColorTest extends TestCase
         $this->assertSame(null,$color->getName());
 
         // integer
+        // 88 is maroon
         $color = new Color(88);
         $this->assertSame([128,0,0],$color->getRGB());
         $this->assertSame(88,$color->getXTermCode());
         $this->assertSame(31,$color->getANSICode());
-        $this->assertSame("88",$color->getName());
+        $this->assertSame("maroon",$color->getName());
+
+        // some xterm number that is not specified
+        $color = new Color(254);
+        $this->assertSame([228,228,228],$color->getRGB());
+        $this->assertSame(254,$color->getXTermCode());
+        $this->assertSame(97,$color->getANSICode());
+        $this->assertSame("gray228",$color->getName());
 
         $color = new Color(1214);
         $this->assertSame(null,$color->getRGB());
@@ -121,13 +129,19 @@ class ColorTest extends TestCase
         $this->assertSame([255,0,255],$color->getRGB());
         $this->assertSame(13,$color->getXTermCode());
         $this->assertSame(95,$color->getANSICode());
-        $this->assertSame("[255,0,255]",$color->getName());
+        $this->assertSame("fuchsia",$color->getName());
+
+        $color = new Color([67,255,70]);
+        $this->assertSame([67,255,70],$color->getRGB());
+        $this->assertSame(2,$color->getXTermCode());
+        $this->assertSame(32,$color->getANSICode());
+        $this->assertSame("limegreen",$color->getName());
 
         $color = new Color([0,255,128]);
         $this->assertSame([0,255,128],$color->getRGB());
         $this->assertSame(48,$color->getXTermCode());
         $this->assertSame(92,$color->getANSICode());
-        $this->assertSame("[0,255,128]",$color->getName());
+        $this->assertSame("springgreen",$color->getName());
 
 
         // invalid types
@@ -205,7 +219,7 @@ class ColorTest extends TestCase
     public function test_getName() {
         // valid
         $color = new Color(122);
-        $this->assertSame("122",$color->getName());
+        $this->assertSame("aquamarine",$color->getName());
 
         // null
         $color = new Color(null);
@@ -226,7 +240,7 @@ class ColorTest extends TestCase
     public function test_getHumanName() {
         // valid
         $color = new Color(122);
-        $this->assertSame("Unknown",$color->getHumanName());
+        $this->assertSame("Aquamarine",$color->getHumanName());
 
         // null
         $color = new Color(null);
@@ -398,6 +412,42 @@ class ColorTest extends TestCase
         $this->assertSame("48;2;218;112;214",$color->generateColorCoding(Mode::RGB,true));
     }
 
+    /**
+     * public function next()
+     * public function previous()
+     *
+     * Return the next name on the main Colors name index
+     * @return string | null - return null if this color is not valid, otherwise, return the next name or
+     * the first name, if this is the last name
+     */
+    public function test_next_previous() {
+
+        // empty color, no next or previous
+        $starting = new Color();
+        $this->assertNull($starting->next());
+        $this->assertNull($starting->previous());
+
+        // bad color, no next or previous
+        $starting = new Color("junk");
+        $this->assertNull($starting->next());
+        $this->assertNull($starting->previous());
+
+        // random color
+        $starting = new Color("violet");
+        $this->assertSame("wheat",$starting->next());
+        $this->assertSame("turquoise",$starting->previous());
+
+        // first color
+        $starting = new Color("aliceblue");
+        $this->assertSame("antiquewhite",$starting->next());
+        $this->assertSame("yellowgreen",$starting->previous());
+
+        // last color
+        $starting = new Color("yellowgreen");
+        $this->assertSame("aliceblue",$starting->next());
+        $this->assertSame("yellow",$starting->previous());
+
+    }
 
 
 }

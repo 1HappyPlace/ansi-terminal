@@ -292,6 +292,67 @@ class ColorsTest extends TestCase
         
     }
 
+    /**
+     * public static function getRGBForXTermCode($index)
+     *
+     * Get the RGB for a particular xterm code
+     *
+     * @param integer $index
+     * @return int[] | null - either the [R,G,B] or null
+     */
+    public function test_getRGBForXTermCode() {
+
+        // first
+        $answer = Colors::getRGBForXTermCode(0);
+        $this->assertSame([0,0,0],$answer);
+
+        // middle
+        $answer = Colors::getRGBForXTermCode(3);
+        $this->assertSame([205,205,0],$answer);
+
+        // last
+        $answer = Colors::getRGBForXTermCode(254);
+        $this->assertSame([238,238,238],$answer);
+
+        // invalid
+        $answer = Colors::getRGBForXTermCode(256);
+        $this->assertNull($answer);
+    }
+
+    public function test_getRGBForVT100() {
+
+        // 30
+        $answer = Colors::getRGBForVT100Code(30);
+        $this->assertSame([0,0,0],$answer);
+
+        // 33
+        $answer = Colors::getRGBForVT100Code(33);
+        $this->assertSame([205,205,0],$answer);
+
+        // 37
+        $answer = Colors::getRGBForVT100Code(37);
+        $this->assertSame([229,229,299],$answer);
+
+        // 38 - invalid
+        $answer = Colors::getRGBForVT100Code(38);
+        $this->assertNull($answer);
+
+        // 90
+        $answer = Colors::getRGBForVT100Code(90);
+        $this->assertSame([76,76,76],$answer);
+
+        // 95
+        $answer = Colors::getRGBForVT100Code(95);
+        $this->assertSame([255,0,255],$answer);
+
+        // 97
+        $answer = Colors::getRGBForVT100Code(97);
+        $this->assertSame([255,255,255],$answer);
+
+        // 98 - invalid
+        $answer = Colors::getRGBForVT100Code(98);
+        $this->assertNull($answer);
+    }
 }
 
 

@@ -293,17 +293,14 @@ class Color implements ColorInterface
                     // save this code
                     $this->XTermCode = $color;
 
-                    // the name is the code
-                    $this->name = $color . "";
-
                     // get the RGB for it
-                    $name = Colors::getColorIndexForXTermCode($this->XTermCode);
+                    $this->name = Colors::getColorIndexForXTermCode($this->XTermCode);
 
                     // get the RGB
-                    $this->RGB = Colors::getRGB($name);
+                    $this->RGB = Colors::getRGB($this->name);
 
                     // get the ANSI Code
-                    $this->ANSICode = Colors::getANSICode($name);
+                    $this->ANSICode = Colors::getANSICode($this->name);
                 }
 
                 // if it is an RGB array
@@ -315,17 +312,14 @@ class Color implements ColorInterface
                     // save the RGB
                     $this->RGB = $color;
 
-                    // save the RGB as the name
-                    $this->name = "[" . $color[0] . "," . $color[1] . "," . $color[2] . "]";
-
                     // match this RGB to some code
-                    $name = Colors::matchRGB($this->RGB);
+                    $this->name = Colors::matchRGB($this->RGB);
 
                     // get the nearest ANSI Code
-                    $this->ANSICode = Colors::getANSICode($name);
+                    $this->ANSICode = Colors::getANSICode($this->name);
 
                     // get the nearest XTerm code
-                    $this->XTermCode = Colors::getXTermCode($name);
+                    $this->XTermCode = Colors::getXTermCode($this->name);
 
                 }
             }
@@ -538,6 +532,104 @@ class Color implements ColorInterface
 
     }
 
+    /**
+     * Return the next name on the main Colors name index
+     * @return string | null - return null if this color is not valid, otherwise, return the next name or
+     * the first name, if this is the last name
+     */
+    public function next() {
 
+
+        // if this is a valid name
+        if ($this->isValid()) {
+
+            // find it on the index of colors
+            $colorNames = Colors::getW3CIndex();
+
+            // get the position of the name in the color index
+            $pos = array_search($this->name,$colorNames);
+
+            // if it was found on the array
+            if ($pos !== false) {
+
+                // if is the last item on the list
+                if ($pos === (count($colorNames)-1)) {
+
+                    // return the first item
+                    return $colorNames[0];
+
+                // it is not last
+                } else {
+
+                    // simply return the next item on the list
+                    return $colorNames[$pos+1];
+                }
+
+            // name not found in list
+            } else {
+                // cannot happen (if name is not valid, it is nulled out), but here just in case
+                // @codeCoverageIgnoreStart
+                return null;
+                // @codeCoverageIgnoreEnd
+            }
+
+        // invalid color
+        } else {
+            return null;
+        }
+        
+
+        
+    }
+
+    /**
+     * Return the previous name on the main Colors name index
+     * @return string | null - return null if this color is not valid, otherwise, return the previous name
+     * or the last name, if this is the first name
+     */
+    public function previous() {
+
+        // if this is a valid name
+        if ($this->isValid()) {
+
+            // find it on the index of colors
+            $colorNames = Colors::getW3CIndex();
+
+            // get the position of the name in the color index
+            $pos = array_search($this->name,$colorNames);
+
+            // if it was found on the array
+            if ($pos !== false) {
+
+                // if is the first item on the list
+                if ($pos === 0) {
+
+                    // return the last item
+                    return $colorNames[count($colorNames)-1];
+
+                    // it is not first
+                } else {
+
+                    // simply return the previous item on the list
+                    return $colorNames[$pos-1];
+                }
+
+            // name is not on the list
+            } else {
+                // cannot happen (constructor will null out invalid names), but here just in case
+                // @codeCoverageIgnoreStart
+                return null;
+                // @codeCoverageIgnoreEnd
+            }
+        }
+        // the color is not valid (name is null)
+        else {
+            // this color object is not valid
+            return null;
+        }
+
+
+
+    }
 
 }

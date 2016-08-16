@@ -349,7 +349,7 @@ class TerminalTest extends TestCase
 
         // now both
         $term->setColors("red","blue")->display("");
-        $output .= "\\e[38;5;9;48;5;20m";
+        $output .= "\\e[38;5;9m";
 
         // chaining
         $term->setColors("orchid","antiqueWhite")->setColors(null,null)->display("");
