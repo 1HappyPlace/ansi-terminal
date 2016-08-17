@@ -447,6 +447,11 @@ class ColorTest extends TestCase
         $this->assertSame("aliceblue",$starting->next());
         $this->assertSame("yellow",$starting->previous());
 
+        // color that is not a W3C color
+        $starting = new Color("gray218");
+        $this->assertNull($starting->next());
+        $this->assertNull($starting->previous());
+
     }
 
 

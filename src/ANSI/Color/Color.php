@@ -567,10 +567,10 @@ class Color implements ColorInterface
 
             // name not found in list
             } else {
-                // cannot happen (if name is not valid, it is null), but here just in case
-                // @codeCoverageIgnoreStart
+
+                // if it is not a W3C color, return null
                 return null;
-                // @codeCoverageIgnoreEnd
+
             }
 
         // invalid color
