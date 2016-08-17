@@ -284,7 +284,7 @@ class ColorsTest extends TestCase
         $this->assertSame("deepskyblue",Colors::getColorIndexForXTermCode(45));
         $this->assertSame("linen",Colors::getColorIndexForXTermCode(255));
         $this->assertSame("ansiwhite",Colors::getColorIndexForXTermCode(15));
-        $this->assertSame("orchid",Colors::getColorIndexForXTermCode(169));
+        $this->assertSame("palevioletred",Colors::getColorIndexForXTermCode(169));
 
         $this->assertSame(null,Colors::getColorIndexForXTermCode(256));
         $this->assertSame(null,Colors::getColorIndexForXTermCode(-1));
@@ -297,8 +297,8 @@ class ColorsTest extends TestCase
      *
      * Get the RGB for a particular xterm code
      *
-     * @param integer $index
-     * @return int[] | null - either the [R,G,B] or null
+     * param integer $index
+     * return int[] | null - either the [R,G,B] or null
      */
     public function test_getRGBForXTermCode() {
 
@@ -311,7 +311,7 @@ class ColorsTest extends TestCase
         $this->assertSame([205,205,0],$answer);
 
         // last
-        $answer = Colors::getRGBForXTermCode(254);
+        $answer = Colors::getRGBForXTermCode(255);
         $this->assertSame([238,238,238],$answer);
 
         // invalid

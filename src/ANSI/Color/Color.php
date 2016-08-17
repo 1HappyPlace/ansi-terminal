@@ -567,7 +567,7 @@ class Color implements ColorInterface
 
             // name not found in list
             } else {
-                // cannot happen (if name is not valid, it is nulled out), but here just in case
+                // cannot happen (if name is not valid, it is null), but here just in case
                 // @codeCoverageIgnoreStart
                 return null;
                 // @codeCoverageIgnoreEnd

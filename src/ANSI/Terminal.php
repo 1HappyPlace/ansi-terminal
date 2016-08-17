@@ -62,7 +62,7 @@ abstract class Terminal
      *          send in one of the constants Mode::VT100, Mode::XTERM, or Mode::RGB
      *          send in one of the actual string values for the constants (case insensitive) "vt100", "RGB", "xterm"
      */
-    public function __construct($mode)
+    public function __construct($mode = Mode::XTERM)
     {
         // save the mode
         $this->mode = new Mode($mode);
@@ -373,6 +373,9 @@ abstract class Terminal
      */
     public function clearScreen() {
 
+        // send out any escaping to implement anything sitting in the desired state
+        $this->outputEscapeSequence();
+
         // escape sequences to clear screen and move it up
         $this->output(EscapeSequenceGenerator::generateClearScreenSequence());
         
@@ -428,6 +431,9 @@ abstract class Terminal
      * @return $this
      */
     public function prompt($text) {
+
+        // send out any escaping to implement anything sitting in the desired state
+        $this->outputEscapeSequence();
 
         // save off the prompt string
         $prompt = $text  . $this->promptCaret . " ";

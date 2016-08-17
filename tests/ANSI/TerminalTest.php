@@ -555,6 +555,13 @@ class TerminalTest extends TestCase
         (new TerminalEcho("VT100"))->clearScreen();
         $output = $clearSeq . $carriageReturnFire;
 
+        // test that any pending styling is sent out
+        $clio = new TerminalEcho("VT100");
+        $clio->setBold(true);
+
+        $clio->clearScreen()->display("Clear")->clearScreen();
+        $output .= "\\e[1m" . $clearSeq  . $carriageReturnFire . "Clear" . $clearSeq . $carriageReturnFire;
+
 
         // chaining
         $clio = new TerminalEcho("VT100");
@@ -606,7 +613,7 @@ class TerminalTest extends TestCase
         /**
          * @var Terminal $stub
          */
-        $stub = $this->getMockBuilder('TerminalEcho')->disableOriginalConstructor()->setMethods(["readUserInput"])->getMock();
+        $stub = $this->getMockBuilder('TerminalEcho')->setMethods(["readUserInput"])->getMock();
         /** @noinspection PhpUndefinedMethodInspection */
         $stub->method('readUserInput')
             ->will($this->returnArgument(0));
@@ -639,13 +646,19 @@ class TerminalTest extends TestCase
         /**
          * @var Terminal $stub
          */
-        $stub = $this->getMockBuilder('TerminalEcho')->disableOriginalConstructor()->setMethods(["readUserInput"])->getMock();
+        $stub = $this->getMockBuilder('TerminalEcho')->setMethods(["readUserInput"])->getMock();
         /** @noinspection PhpUndefinedMethodInspection */
         $stub->method('readUserInput')
             ->will($this->returnArgument(0));
 
         $answer = $stub->prompt("This is a prompt");
         $this->assertEquals("This is a prompt> ",$answer);
+
+        // be sure the prompt sends out the bold escape sequencing
+        $stub->setBold();
+        $answer = $stub->prompt("This is a prompt");
+        $this->assertEquals("This is a prompt> ",$answer);
+        $this->expectOutputString("\\e[1m");
 
     }
 
