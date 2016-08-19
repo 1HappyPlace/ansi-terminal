@@ -341,6 +341,9 @@ abstract class Terminal
      * @return $this
      */
     public function newLine($count = 1) {
+        
+        // send out any escaping to implement anything sitting in the desired state
+        $this->outputEscapeSequence();
 
         // if the $count is greater than one
         if (is_int($count) && $count > 1) {
