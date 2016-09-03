@@ -17,23 +17,23 @@ use RuntimeException;
  * abstract class with the following two abstract methods:
  *          abstract public function output($text); - determine where all the output goes
  *          abstract public function carriageReturn(); - fires whenever the carriage return is hit
- * 
+ *
  *
  */
 
-abstract class Terminal
+abstract class Terminal implements TerminalInterface
 {
-    
+
     /**
      * The current state of the terminal, bold, underscore, and colors
      * @var TerminalState
      */
     protected $currentState;
-    
+
     /**
      * The desired state built during calls to set different styles of the terminal
      * The new styling is accumulated and sent out when a display is requested
-     * 
+     *
      * @var TerminalState
      */
     protected $desiredState;
@@ -64,15 +64,14 @@ abstract class Terminal
      */
     public function __construct($mode = Mode::XTERM)
     {
-        // save the mode
-        $this->mode = new Mode($mode);
 
         // initialize the current and desired state to empty (no styling)
         $this->currentState = new TerminalState();
         $this->desiredState = new TerminalState();
 
         // create a new generator
-        $this->generator = new EscapeSequenceGenerator($this->mode);
+        $mode = new Mode($mode);
+        $this->generator = new EscapeSequenceGenerator($mode);
 
 
     }
@@ -80,11 +79,11 @@ abstract class Terminal
     /**
      * Gets the desired state of the terminal, note that this is not related to the actual state
      * of the terminal, rather, the desired state that will happen the next time text is output
-     * 
+     *
      * @return TerminalStateInterface
      */
     public function getState() {
-        
+
         // return the current desired state
         return $this->desiredState;
     }
@@ -95,7 +94,7 @@ abstract class Terminal
     /////////////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * 
+     *
      * All output goes to this function
      *
      * @param string $text
@@ -117,11 +116,11 @@ abstract class Terminal
      * Set bolding on or off
      *
      * @param boolean $on
-     * 
+     *
      * @return $this;
      */
     public function setBold($on = true) {
-        
+
         // set the desired bold state
         $this->desiredState->setBold($on);
 
@@ -133,11 +132,11 @@ abstract class Terminal
      * Returns the current desired state of bolding, this may not represent what has
      * been commanded to the terminal, but rather the current intent.  Commanding only
      * happens with display
-     * 
+     *
      * @return bool
      */
     public function getBold() {
-        
+
         // return the desired state of bold
         return $this->desiredState->isBold();
     }
@@ -182,7 +181,7 @@ abstract class Terminal
 
     /**
      * Set the text color
-     * 
+     *
      * @param ColorInterface | string | integer | array | null $color
      *      Color parameters can be:
      *          - Object adhering to the Color Interface
@@ -190,11 +189,11 @@ abstract class Terminal
      *          - Xterm integer from 0-255
      *          - [R,G,B]
      *          - null
-     * 
+     *
      * @return $this
      */
     public function setTextColor($color) {
-        
+
         // set the desired text color
         $this->desiredState->setTextColor($color);
 
@@ -206,11 +205,11 @@ abstract class Terminal
     /**
      * Return the currently desired text color, keep in mind this may not be what has
      * been commanded to the terminal, the commanding only goes out the door with display
-     * 
+     *
      * @return ColorInterface
      */
     public function getTextColor() {
-        
+
         // return the current desired text color
         return $this->desiredState->getTextColor();
     }
@@ -218,7 +217,7 @@ abstract class Terminal
 
     /**
      * Set the fill color
-     * 
+     *
      * @param ColorInterface | string | integer | array | null $color
      *     Color parameters can be:
      *          - Object adhering to the Color Interface
@@ -255,7 +254,7 @@ abstract class Terminal
      *
      * @param $textColor int|string|null $color - can be either a Color constant Color::Blue or a string with the same spelling "blue", "Red", "LIGHT CYAN", etc
      * @param $fillColor int|string|null $color - can be either a Color constant Color::Blue or a string with the same spelling "blue", "Red", "LIGHT CYAN", etc
-     * 
+     *
      * @return $this
      */
     public function setColors($textColor = null, $fillColor = null) {
@@ -287,7 +286,7 @@ abstract class Terminal
 
         // if it desired to send out the clear sequence right away
         if ($rightAway) {
-            
+
             // send it out
             $this->output(EscapeSequenceGenerator::generateClearSequence());
 
@@ -305,10 +304,10 @@ abstract class Terminal
      * Send out the escape sequence which will accomplish the desired state
      */
     public function outputEscapeSequence() {
-        
+
         // send out any escaping to implement anything sitting in the desired state
         $this->output($this->generator->generate($this->currentState, $this->desiredState));
-        
+
         // copy the current state to the now achieved desired state
         $this->currentState = clone $this->desiredState;
     }
@@ -325,7 +324,7 @@ abstract class Terminal
 
         // send out any escaping to implement anything sitting in the desired state
         $this->outputEscapeSequence();
-        
+
         // Send out the text
         $this->output($text);
 
@@ -341,7 +340,7 @@ abstract class Terminal
      * @return $this
      */
     public function newLine($count = 1) {
-        
+
         // send out any escaping to implement anything sitting in the desired state
         $this->outputEscapeSequence();
 
@@ -354,17 +353,17 @@ abstract class Terminal
                 // echo the newline character
                 $this->output("\n");
             }
-            
+
         } else {
             // the parameter might be one or something crazy, just output one
             // echo the new line character
             $this->output("\n");
         }
-        
+
         // fire the handler that indicates the cursor is sent to the left margin
         $this->carriageReturn();
 
-       // chaining
+        // chaining
         return $this;
     }
 
@@ -381,21 +380,21 @@ abstract class Terminal
 
         // escape sequences to clear screen and move it up
         $this->output(EscapeSequenceGenerator::generateClearScreenSequence());
-        
+
         // fire the handler that indicates the cursor is sent to the left margin
-        $this->carriageReturn();     
+        $this->carriageReturn();
 
         // chaining
         return $this;
     }
-    
+
 
     /**
      * Produce a beep on the terminal, this is not part of ANSI, but rather and ASCII code
      * It may or may not work on other terminal emulators.
      */
     public function beep() {
-        
+
         // sequence for beep
         $this->output("\007");
 
@@ -485,7 +484,7 @@ abstract class Terminal
         throw new RuntimeException($message);
 
     }
-    
+
     /**
      * Get the current screen terminal type
      *
@@ -523,7 +522,7 @@ abstract class Terminal
             // use the error handler to raise the exception
             self::errorHandler(null,null );
 
-        } 
+        }
 
 
         // put back the error handler

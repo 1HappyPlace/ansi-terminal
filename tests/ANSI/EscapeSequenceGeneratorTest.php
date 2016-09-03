@@ -201,33 +201,32 @@ class EscapeSequenceGeneratorTest extends TestCase
      * return string
      */
     public function test_generateSequence() {
-        
-        $method = self::getMethod("generateSequence");
+
         
         $generator = new EscapeSequenceGenerator("VT100");
         $state = new TerminalState();
-        
-        $sequence = $method->invokeArgs($generator,[$state, false]);
-        $this->assertSame("",$sequence);
 
-        $sequence = $method->invokeArgs($generator,[$state, true]);
-        $this->assertSame("\e[0m",$sequence);
+        // empty, don't generate clear
+        $this->assertSame("",$generator->generateSequence($state, false));
 
+        // empty, do generate clear
+        $this->assertSame("\e[0m",$generator->generateSequence($state,true));
+
+        // set bold, clear true
         $state->setBold(true);
-        $sequence = $method->invokeArgs($generator,[$state, true]);
-        $this->assertSame("\e[0;1m",$sequence);
+        $this->assertSame("\e[0;1m",$generator->generateSequence($state, true));
 
+        // set underscore, clear false
         $state->setUnderscore(true);
-        $sequence = $method->invokeArgs($generator,[$state, false]);
-        $this->assertSame("\e[1;4m",$sequence);
+        $this->assertSame("\e[1;4m",$generator->generateSequence($state, false));
 
+        // set text color to red, clear false
         $state->setTextColor("ansired");
-        $sequence = $method->invokeArgs($generator,[$state, false]);
-        $this->assertSame("\e[1;4;31m",$sequence);
+        $this->assertSame("\e[1;4;31m",$generator->generateSequence($state, false));
 
+        // set fill color to ansiblack, clear false
         $state->setFillColor("ansiblack");
-        $sequence = $method->invokeArgs($generator,[$state, false]);
-        $this->assertSame("\e[1;4;31;40m",$sequence);
+        $this->assertSame("\e[1;4;31;40m",$generator->generateSequence($state, false));
 
 
 
@@ -261,6 +260,10 @@ class EscapeSequenceGeneratorTest extends TestCase
 
         // ensure bold was turned on
         $this->assertSame("\e[1m",$sequence);
+
+        // ask again, but nothing should happen
+        $sequence = $generator->generate($currentState, $desiredState);
+        $this->assertSame("",$sequence);
 
         // turn off bold, but turn on underscore
         $desiredState->setBold(false)->setUnderscore(true);

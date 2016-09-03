@@ -194,7 +194,7 @@ class EscapeSequenceGenerator
      * @param boolean $reset - whether the zero reset code needs to start this sequence
      * @return string
      */
-    protected function generateSequence(TerminalState $state, $reset) {
+    public function generateSequence(TerminalState $state, $reset) {
 
         // this will return null if there are no active styles
         $sequence = "";
@@ -267,9 +267,21 @@ class EscapeSequenceGenerator
 
         // if an object is returned, then just positive changes are occurring
         if ($changes) {
+            
+            // if there are really no changes
+            if ($changes->isClear()) {
 
-            // generate the sequence for the things that are actually changing
-            return $this->generateSequence($changes, false);
+                // return an empty string
+                return "";
+               
+            // there are some changes
+            } else {
+
+                // generate the sequence for the things that are actually changing
+                return $this->generateSequence($changes, false);
+
+            }
+
 
         // if null is returned, then something is getting turned off
         } else {
