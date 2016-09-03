@@ -22,8 +22,13 @@ use RuntimeException;
 
 interface TerminalInterface
 {
-    
 
+    /**
+     * Set the state of the terminal directly
+     *
+     * @param TerminalStateInterface $state
+     */
+    public function setState(TerminalStateInterface $state);
 
     /**
      * Gets the desired state of the terminal, note that this is not related to the actual state

@@ -3,6 +3,7 @@
 
 use ANSI\Color\Mode;
 use ANSI\Terminal;
+use ANSI\TerminalState;
 use ANSI\TerminalStateInterface;
 use PHPUnit\Framework\TestCase;
 
@@ -50,6 +51,38 @@ class TerminalTest extends TestCase
 
     public function tearDown()
     {
+
+    }
+
+    /**
+     * Set the state of the terminal directly
+     *
+     * @param TerminalStateInterface $state
+     */
+    public function test_setState() {
+        $term = new TerminalEcho(Mode::VT100);
+
+        $state = new TerminalState();
+        $state->setBold(true);
+        $term->setState($state);
+
+        $term->display("Bold Text");
+        $output = "\\e[1mBold Text";
+
+        $state->setBold(false)->setTextColor("ansicyan");
+        $term->setState($state);
+        $term->display("Cyan");
+        $output .= "\\e[0;36mCyan";
+
+
+        $term->display("Nothing new");
+        $output .= "Nothing new";
+
+        $term->setState(new TerminalState());
+        $term->display("Clear");
+        $output .= "\\e[0mClear";
+
+        $this->expectOutputString($output);
 
     }
 
