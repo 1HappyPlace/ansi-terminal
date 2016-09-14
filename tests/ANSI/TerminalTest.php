@@ -8,29 +8,7 @@ use ANSI\TerminalStateInterface;
 use PHPUnit\Framework\TestCase;
 
 
-class TerminalEcho extends Terminal {
-
-    /**
-     *
-     * All output goes to this function
-     *
-     * @param string $text
-     */
-    public function output($text) {
-        // echo the text
-        echo str_replace("\033","\\e",$text);
-    }
-
-    /**
-     * Anytime the cursor is returned to the leftmost column, this is fired
-     */
-    public function carriageReturn() {
-        echo "CR";
-
-    }
-
-
-}
+require 'TerminalStub.php';
 
 class TerminalTest extends TestCase
 {
@@ -60,7 +38,7 @@ class TerminalTest extends TestCase
      * @param TerminalStateInterface $state
      */
     public function test_setState() {
-        $term = new TerminalEcho(Mode::VT100);
+        $term = new TerminalStub(Mode::VT100);
 
         $state = new TerminalState();
         $state->setBold(true);
@@ -96,7 +74,7 @@ class TerminalTest extends TestCase
      */
     public function test_getState() {
 
-        $term = new TerminalEcho(Mode::XTERM);
+        $term = new TerminalStub(Mode::XTERM);
 
         $state = $term->getState();
         $this->assertInstanceOf("\\ANSI\\TerminalStateInterface",$state);
@@ -157,7 +135,7 @@ class TerminalTest extends TestCase
      */
     public function test_setGetBold() {
 
-        $term = new TerminalEcho("VT100");
+        $term = new TerminalStub("VT100");
         $this->assertFalse($term->getBold());
 
         // now set the desired bolding to true (but don't command the terminal)
@@ -201,7 +179,7 @@ class TerminalTest extends TestCase
      */
     public function test_setGetUnderscore() {
 
-        $term = new TerminalEcho("VT100");
+        $term = new TerminalStub("VT100");
         $this->assertFalse($term->getUnderscore());
 
         // now set the desired underscoring to true (but don't command the terminal)
@@ -256,7 +234,7 @@ class TerminalTest extends TestCase
      */
     public function test_setTextColor() {
 
-        $term = new TerminalEcho("XTERM");
+        $term = new TerminalStub("XTERM");
         $textColor = $term->getTextColor();
         $this->assertFalse($textColor->isValid());
 
@@ -275,7 +253,7 @@ class TerminalTest extends TestCase
         $textColor = $term->getTextColor();
         $this->assertSame("blue",$textColor->getName());
 
-        $term = new TerminalEcho("RGB");
+        $term = new TerminalStub("RGB");
 
         // set the same color again, chaining
         $term->setTextColor("green")->setTextColor("red")->display("");
@@ -283,7 +261,7 @@ class TerminalTest extends TestCase
         $textColor = $term->getTextColor();
         $this->assertSame("red",$textColor->getName());
 
-        $term = new TerminalEcho("VT100");
+        $term = new TerminalStub("VT100");
 
         // set a new color from an old color
         $term->setTextColor("ansired")->display("")->setTextColor(null)->setTextColor("ansiblack")->display("");
@@ -318,7 +296,7 @@ class TerminalTest extends TestCase
      */
     public function test_setGetFillColor() {
 
-        $term = new TerminalEcho("XTERM");
+        $term = new TerminalStub("XTERM");
         $fillColor = $term->getFillColor();
         $this->assertFalse($fillColor->isValid());
 
@@ -336,7 +314,7 @@ class TerminalTest extends TestCase
         $fillColor = $term->getFillColor();
         $this->assertSame("blue",$fillColor->getName());
 
-        $term = new TerminalEcho("RGB");
+        $term = new TerminalStub("RGB");
 
         // set the same color again, chaining
         $term->setFillColor("green")->setFillColor("red")->display("");
@@ -344,7 +322,7 @@ class TerminalTest extends TestCase
         $fillColor = $term->getFillColor();
         $this->assertSame("red",$fillColor->getName());
 
-        $term = new TerminalEcho("VT100");
+        $term = new TerminalStub("VT100");
 
         // set a new color from an old color
         $term->setFillColor("ansired")->display("")->setFillColor(null)->setFillColor("ansiblack")->display("");
@@ -369,7 +347,7 @@ class TerminalTest extends TestCase
      * return $this
      */
     public function test_setColors() {
-        $term = new TerminalEcho("XTERM");
+        $term = new TerminalStub("XTERM");
 
 
         // set just a text color
@@ -406,7 +384,7 @@ class TerminalTest extends TestCase
     public function test_clear() {
 
         // simply call it, it just produces esc[0m
-        $term = new TerminalEcho("XTERM");
+        $term = new TerminalStub("XTERM");
         $term->display("");
         $term->setBold()->display("")->clear()->display("");
         $output = "\\e[1m\\e[0m";
@@ -434,7 +412,7 @@ class TerminalTest extends TestCase
      */
     public function test_outputEscapeSequence() {
 
-        $clio = new TerminalEcho("VT100");
+        $clio = new TerminalStub("VT100");
         $clio->setTextColor("red");
         $clio->outputEscapeSequence();
         $output = "\\e[91m";
@@ -487,7 +465,7 @@ class TerminalTest extends TestCase
         $carriageReturnFire = "CR";
 
 
-        $clio = new TerminalEcho("VT100");
+        $clio = new TerminalStub("VT100");
 
         // display nothing
         $clio->display(null);
@@ -495,7 +473,7 @@ class TerminalTest extends TestCase
 
 
         // display simple text
-        $clio = new TerminalEcho("VT100");
+        $clio = new TerminalStub("VT100");
 
         // display simple text
         $clio->display("Text");
@@ -507,7 +485,7 @@ class TerminalTest extends TestCase
 
 
         // display types
-        $clio = new TerminalEcho("VT100");
+        $clio = new TerminalStub("VT100");
 
         // boolean
         $clio->display(true)->newLine();
@@ -543,11 +521,11 @@ class TerminalTest extends TestCase
 
 
         // simply call it, it just produces \n
-        (new TerminalEcho("VT100"))->newLine();
+        (new TerminalStub("VT100"))->newLine();
         $output = "\n" . $carriageReturnFire;
 
         // chaining
-        $clio = new TerminalEcho("VT100");
+        $clio = new TerminalStub("VT100");
         $clio->newLine()->newLine();
         $output .= "\n" . $carriageReturnFire . "\n" . $carriageReturnFire;
 
@@ -585,11 +563,11 @@ class TerminalTest extends TestCase
         $carriageReturnFire = "CR";
 
         // generate the clear screen sequence
-        (new TerminalEcho("VT100"))->clearScreen();
+        (new TerminalStub("VT100"))->clearScreen();
         $output = $clearSeq . $carriageReturnFire;
 
         // test that any pending styling is sent out
-        $clio = new TerminalEcho("VT100");
+        $clio = new TerminalStub("VT100");
         $clio->setBold(true);
 
         $clio->clearScreen()->display("Clear")->clearScreen();
@@ -597,7 +575,7 @@ class TerminalTest extends TestCase
 
 
         // chaining
-        $clio = new TerminalEcho("VT100");
+        $clio = new TerminalStub("VT100");
 
         $clio->clearScreen()->display("Clear")->clearScreen();
         $output .= $clearSeq  . $carriageReturnFire . "Clear" . $clearSeq . $carriageReturnFire;
@@ -619,12 +597,12 @@ class TerminalTest extends TestCase
     public function test_beep() {
 
         // generate the clear screen sequence
-        (new TerminalEcho("VT100"))->beep();
+        (new TerminalStub("VT100"))->beep();
         $output = "\007";
 
 
         // chaining
-        $clio = new TerminalEcho("VT100");
+        $clio = new TerminalStub("VT100");
         $clio->beep()->beep();
         $output .= "\007\007";
 
@@ -646,7 +624,7 @@ class TerminalTest extends TestCase
         /**
          * @var Terminal $stub
          */
-        $stub = $this->getMockBuilder('TerminalEcho')->setMethods(["readUserInput"])->getMock();
+        $stub = $this->getMockBuilder('TerminalStub')->setMethods(["readUserInput"])->getMock();
         /** @noinspection PhpUndefinedMethodInspection */
         $stub->method('readUserInput')
             ->will($this->returnArgument(0));
@@ -679,7 +657,7 @@ class TerminalTest extends TestCase
         /**
          * @var Terminal $stub
          */
-        $stub = $this->getMockBuilder('TerminalEcho')->setMethods(["readUserInput"])->getMock();
+        $stub = $this->getMockBuilder('TerminalStub')->setMethods(["readUserInput"])->getMock();
         /** @noinspection PhpUndefinedMethodInspection */
         $stub->method('readUserInput')
             ->will($this->returnArgument(0));
