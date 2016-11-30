@@ -442,7 +442,7 @@ abstract class Terminal implements TerminalInterface
      * Prompt for a value.
      *
      * @param $text - the prompt string
-     * @return $this
+     * @return string
      */
     public function prompt($text) {
 
