@@ -17,7 +17,7 @@ class TerminalTest extends TestCase
     public $CSE = null;
     public $clear = null;
 
-    public function setUp()
+    public function setUp(): void
     {
 
         $this->CSI = "\\e[";
@@ -27,7 +27,7 @@ class TerminalTest extends TestCase
 
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
 
     }

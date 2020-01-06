@@ -27,13 +27,13 @@ class ModeTest extends TestCase
         return $method;
     }
 
-    public function setUp()
+    public function setUp(): void
     {
 
 
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
 
     }

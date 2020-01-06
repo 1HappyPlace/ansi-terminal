@@ -13,7 +13,7 @@ class BasicTerminalTest extends TestCase
     public $CSE = null;
     public $clear = null;
 
-    public function setUp()
+    public function setUp(): void
     {
 
         $this->CSI = "\\e[";
@@ -23,7 +23,7 @@ class BasicTerminalTest extends TestCase
 
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
 
     }
@@ -44,18 +44,7 @@ class BasicTerminalTest extends TestCase
         $this->expectOutputString("\e[1;4;36;40mHello World!\e[0m");
     }
 
-    /**
-     * public function carriageReturn()
-     *
-     * Anytime the cursor is returned to the leftmost column, this is fired
-     */
-    public function test_carriageReturn() {
 
-        // it is so simple it doesn't care about this trigger
-        $term = new BasicTerminal("rgb");
-        $term->newLine();
-
-    }
 
 
 

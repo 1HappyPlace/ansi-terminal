@@ -1,16 +1,17 @@
 <?php
 
 
+use PHPUnit\Framework\TestCase;
 use PHPUnitColors\Display;
 use ANSI\Terminal;
 
-class TerminalTestExecDisabled extends PHPUnit_Framework_TestCase
+class TerminalTestExecDisabled extends TestCase
 {
 
 //*** NOTE TO FULLY RUN THIS, the php.ini should be changed to
 // disable_functions=exec to test the exception handler ***/
 
-    public function setUp()
+    public function setUp(): void
     {
         // get the functions that are disabled in the php.ini
         $originalSetting = ini_get("disable_functions");
@@ -31,7 +32,7 @@ class TerminalTestExecDisabled extends PHPUnit_Framework_TestCase
 
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
 
     }
