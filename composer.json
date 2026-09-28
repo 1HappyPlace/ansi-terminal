@@ -4,10 +4,6 @@
     "keywords": ["Terminal","Emulator","ANSI"],
     "homepage": "http://clio.1happyplace.com/clio/ansi-terminal.html",
     "type": "library",
-    "require-dev": {
-        "phpunit/phpunit": "^9.5",
-        "1happyplace/phpunit-colors": "1.*"
-    },
     "autoload": {
       "psr-4": {
         "ANSI\\": "src/ANSI/"
